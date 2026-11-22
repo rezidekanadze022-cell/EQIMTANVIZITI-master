@@ -1,0 +1,52 @@
+@host = http://localhost:5052
+
+### 1. რეგისტრაცია (კოდი მოვა ელფოსტაზე; Development-ში კონსოლშიც ჩანს)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{ "firstName": "Nino", "lastName": "Beridze", "email": "nino@test.com", "phoneNumber": "599123456", "password": "Pass12345" }
+
+### 2. Verify
+POST {{host}}/api/auth/verify
+Content-Type: application/json
+
+{ "email": "nino@test.com", "code": "123456" }
+
+### 3. Login -> აიღე "token"
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "nino@test.com", "password": "Pass12345" }
+
+### 4. ექიმების სია
+GET {{host}}/api/doctors
+Authorization: Bearer PASTE_TOKEN
+
+### 5. ვიზიტის დაჯავშნა (პაციენტი)
+POST {{host}}/api/reservations
+Authorization: Bearer PASTE_TOKEN
+Content-Type: application/json
+
+{ "doctorId": 2, "reservationDate": "2026-12-01T10:00:00Z", "description": "თავის ტკივილი" }
+
+### 6. ჩემი ვიზიტები
+GET {{host}}/api/reservations/my
+Authorization: Bearer PASTE_TOKEN
+
+### 7. ადმინი ქმნის ექიმს (admin login: admin@eqimtanviziti.local / Admin12345)
+POST {{host}}/api/doctors
+Authorization: Bearer ADMIN_TOKEN
+Content-Type: application/json
+
+{ "firstName": "Giorgi", "lastName": "Maisuradze", "email": "doctor@test.com", "phoneNumber": "577111222", "password": "Doctor12345", "specialization": "Therapist", "consultationPrice": 50 }
+
+### 8. ექიმი წერს რეცეპტს (doctor token)
+POST {{host}}/api/prescriptions
+Authorization: Bearer DOCTOR_TOKEN
+Content-Type: application/json
+
+{ "reservationId": 1, "medications": ["Paracetamol 500mg - დღეში 3-ჯერ"], "labTestIds": [1, 2], "notes": "დაისვენეთ 3 დღე" }
+
+### 9. ჩემი რეცეპტები (პაციენტი)
+GET {{host}}/api/prescriptions/my
+Authorization: Bearer PASTE_TOKEN
